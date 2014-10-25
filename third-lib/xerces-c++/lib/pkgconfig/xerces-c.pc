@@ -1,0 +1,10 @@
+prefix=/data/duhui/github/degobert/soft/xerces-c++
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Xerces-C++
+Description: Validating XML parser library for C++
+Version: 3.1.1
+Libs: -L${libdir} -lxerces-c
+Cflags: -I${includedir}

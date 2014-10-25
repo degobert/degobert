@@ -1,0 +1,13 @@
+prefix=/home/duhui/github/degobert/soft/tcmalloc
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: google-perftools
+Version: 1.8.3
+Description: Performance tools for C++
+URL: http://code.google.com/p/google-perftools/
+Requires:
+Libs: -L${libdir} -ltcmalloc_debug
+Libs.private: -pthread -lpthread
+Cflags: -I${includedir}

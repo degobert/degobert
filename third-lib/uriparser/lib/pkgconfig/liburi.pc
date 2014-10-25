@@ -1,0 +1,11 @@
+prefix=/data/duhui/github/degobert/soft/uriparser
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: liburi
+Description: URI parsing library
+URL: https://github.com/nevali/liburi
+Version: master
+Libs: -L${libdir} -luri
+Cflags: -I${includedir}

@@ -1,0 +1,5 @@
+* Ensure error states are ferried back from uriparser to errno properly
+
+* Better handle schemes which don't fit the strict pattern (URNs, tag:, dvb:, data:, etc.)
+
+* Bindings
