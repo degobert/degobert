@@ -1,0 +1,62 @@
+Src = Split(Glob('src/*.cpp'))
+Src += Split(Glob('../../rpc/*.cc'))
+Src += Split(Glob('src/thrift/*.cpp'))
+
+ThirdLib = Split('rt pthread crypto')
+
+Libs = Split('nshead connectpool ependingpool hiredis basenet fcgi_mt jsoncpp log4cplus uriparser murmurhash protobuf enc ori_util curlpp curl cares tinyxml gflags ori_util boost_iostreams boost_regex ctemplate thrift') + ThirdLib
+
+IncludePATH = []
+IncludePATH += ['./include']
+IncludePATH += ['./include/thrift/'] 
+IncludePATH += ['../../../third-lib/c-ares/include/'] 
+IncludePATH += ['../../../third-lib/curl/include/']
+IncludePATH += ['../../../third-lib/murmurhash/include']
+IncludePATH += ['../../../third-lib/protobuf/include']
+IncludePATH += ['../../../third-lib/log4cplus/include']
+IncludePATH += ['../../../third-lib/redis/include']
+IncludePATH += ['../../../third-lib/uriparser/include']
+IncludePATH += ['../../../public/connectpool']
+IncludePATH += ['../../../public/nshead']
+IncludePATH += ['../../../public/basenet']
+IncludePATH += ['../../../public/enc']
+IncludePATH += ['../../../public/ori_util']
+IncludePATH += ['../../../public/libfcgi_mt/include']
+IncludePATH += ['../../../public/ependingpool']
+IncludePATH += ['../../rpc']
+IncludePATH += ['../../../third-lib/jsoncpp/include']
+IncludePATH += ['../../../third-lib/boost/include']
+IncludePATH += ['../../../third-lib/curlpp/include']
+IncludePATH += ['../../../third-lib/tinyxml']
+IncludePATH += ['../../../third-lib/gflags/include/']
+IncludePATH += ['../../../third-lib/gperftools/include/']
+IncludePATH += ['../../../third-lib/gctemplate/include/']
+IncludePATH += ['../../../third-lib/thrift/include/cplusplus/']
+
+LibPATH = []
+LibPATH += ['../../../third-lib/murmurhash/lib/']
+LibPATH += ['../../../third-lib/protobuf/lib/']
+LibPATH += ['../../../third-lib/jsoncpp/lib/']
+LibPATH += ['../../../third-lib/log4cplus/lib/']
+LibPATH += ['../../../third-lib/uriparser/lib/']
+LibPATH += ['../../../third-lib/redis/lib/']
+LibPATH += ['../../../public/connectpool/']
+LibPATH += ['../../../public/nshead/']
+LibPATH += ['../../../public/basenet/']
+LibPATH += ['../../../public/enc/']
+LibPATH += ['../../../public/ori_util/']
+LibPATH += ['../../../public/libfcgi_mt/lib/']
+LibPATH += ['../../../public/ependingpool/']
+LibPATH += ['../../../third-lib/boost/lib/']
+LibPATH += ['../../../third-lib/curl/lib/']
+LibPATH += ['../../../third-lib/c-ares/lib/']
+LibPATH += ['../../../third-lib/curlpp/lib/']
+LibPATH += ['../../../third-lib/tinyxml/']
+LibPATH += ['../../../third-lib/gflags/lib/']
+LibPATH += ['../../../third-lib/gperftools/lib/']
+LibPATH += ['../../../third-lib/gctemplate/lib/']
+LibPATH += ['../../../third-lib/thrift/lib/']
+
+CCFlags = Split('-g -O2 -std=c++0x')
+
+Program(target = 'bin/ori-ui',source = Src,LIBS=Libs,LIBPATH=LibPATH,CPPPATH=IncludePATH,CCFLAGS=CCFlags)

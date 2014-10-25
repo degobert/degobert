@@ -1,0 +1,97 @@
+/*
+ * =====================================================================================
+ *
+ *       Filename:  server.cpp
+ *
+ *    Description:  单进程 非阻塞 select 
+ *
+ *        Version:  1.0
+ *        Created:  2014年08月20日 11时42分30秒
+ *       Revision:  none
+ *       Compiler:  gcc
+ *
+ *         Author:  degobert (dh), degobert@163.com
+ *        Company:  degobert
+ *
+ * =====================================================================================
+ */
+#include "head.h"
+#define SERV_PORT 10008
+#define MAXCLIENT 5
+int fd[MAXCLIENT];  // 连接的fd
+int conn_amount;  // 当前的连接数
+int main(int argc, char* argv[])
+{
+    signal(SIGPIPE, SIG_IGN);
+    signal(SIGCHLD, SIG_IGN);
+    std::cout<<"hello world\n";
+    int listen_fd, read_fd, flags;
+    struct sockaddr_in listen_addr, client_addr;
+    socklen_t len = sizeof(struct sockaddr_in);
+    listen_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (listen_fd == -1) {
+        perror("socket error");
+        return -1;
+    }
+
+    if (setsockopt(listen_fd, SOL_SOCKET,SO_REUSEADDR,(char*)&flags, sizeof(flags)) == -1 ) {
+        perror("setsockopt error");
+        return -1;
+    }
+    // 设置非阻塞模式
+    int flag = fcntl(listen_fd, F_GETFL,0);
+    fcntl(listen_fd, F_SETFL, flag|O_NONBLOCK);
+
+    bzero(&listen_addr, sizeof(listen_addr));
+    listen_addr.sin_family = AF_INET;
+    listen_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    listen_addr.sin_port = htons(SERV_PORT);
+    bind(listen_fd, (struct sockaddr *)&listen_addr, len);
+    listen(listen_fd, 3);
+    fd_set fd_sets;
+    int max_fd = listen_fd;
+    int events = 0;
+    int read_fds[1024];
+    int i = 0;
+    struct  timeval tv;
+    while(1) {
+        tv.tv_sec = 10;
+        tv.tv_usec=0;
+        // 初始化文件描述符
+        FD_ZERO(&fd_sets);  // 清除描述符集
+        FD_SET(listen_fd, &fd_sets);  //把socket 加入描述符集
+        int k =0;
+        for (k = 0; k <= i; k++) {
+            FD_SET(read_fds[k], &fd_sets);
+        }
+        events = select(max_fd  + 1, &fd_sets, NULL, NULL,  NULL);
+        if ( events < 0 ) { perror("select error\n"); break;}
+        else if (events == 0) { printf("time out \n"); continue;}
+
+        if (events > 0) {
+//            printf("events = %d\n", events);
+            if (FD_ISSET(listen_fd, &fd_sets) ) {
+                printf("listen event :1 \n");
+                int read_fd = accept(listen_fd, (struct sockaddr*) &client_addr, &len);
+                int flag = fcntl(read_fd, F_GETFL,0);
+                fcntl(read_fd, F_SETFL, flag|O_NONBLOCK);
+                read_fds[i] = read_fd;
+                i++;
+                max_fd = read_fd;
+                printf("new accept fd:%d\n", read_fd);
+            int j = 0;
+            for( j = 0; j <= i; j++) {
+                if (FD_ISSET(read_fds[j], &fd_sets)) {
+                    printf("accept event : %d\n", j);
+                    char in_buf[8000];
+                    memset(in_buf, 0, 8000);
+                    recv(read_fds[j], &in_buf, 8000,0);
+                    printf("accept content %s\n", in_buf);
+                
+                }
+            }   
+            }
+        }
+    }
+    return 0;
+}

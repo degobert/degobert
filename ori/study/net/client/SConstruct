@@ -1,0 +1,18 @@
+Src = Split(Glob('src/*.cpp'))
+#Src += Split(Glob('../../rpc/*.cc'))
+#Src += Split(Glob('src/thrift/*.cpp'))
+
+ThirdLib = Split('rt pthread crypto')
+
+#Libs = Split('nshead connectpool ependingpool hiredis basenet fcgi_mt jsoncpp log4cplus uriparser murmurhash protobuf enc ori_util curlpp curl cares tinyxml gflags ori_util boost_iostreams boost_regex ctemplate thrift') + ThirdLib
+#Libs = Split('') + ThirdLib
+
+IncludePATH = []
+IncludePATH += ['./include']
+
+LibPATH = []
+
+CCFlags = Split('-g -O2 -std=c++0x')
+
+Program(target = 'bin/client',source = Src,LIBPATH=LibPATH,CPPPATH=IncludePATH,CCFLAGS=CCFlags)
+#Program(target = 'bin/study-net',source = Src,LIBS=Libs,LIBPATH=LibPATH,CPPPATH=IncludePATH,CCFLAGS=CCFlags)

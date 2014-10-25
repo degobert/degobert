@@ -1,0 +1,64 @@
+/*
+ * =====================================================================================
+ *
+ *       Filename:  server.cpp
+ *
+ *    Description:  Test  
+ *    多进程阻塞
+ *    父进程listen,有请求进来就fork一个子进程， 子进程accept之后去处理， 处理完后就退出
+ *
+ *        Version:  1.0
+ *        Created:  2014年08月20日 11时42分30秒
+ *       Revision:  none
+ *       Compiler:  gcc
+ *
+ *         Author:  degobert (dh), degobert@163.com
+ *        Company:  degobert
+ *
+ * =====================================================================================
+ */
+#include "head.h"
+
+int main(int argc, char* argv[])
+{
+    signal(SIGPIPE, SIG_IGN);
+    signal(SIGCHLD, SIG_IGN);
+    int     SERV_PORT =10008;
+    std::cout<<"hello world\n";
+    int listen_fd, read_fd;
+    struct sockaddr_in listen_addr, client_addr;
+    socklen_t len = sizeof(struct sockaddr_in);
+    listen_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (listen_fd == -1)
+    {
+        perror("socket error");
+        return -1;
+    }
+    bzero(&listen_addr, sizeof(listen_addr));
+    listen_addr.sin_family = AF_INET;
+    listen_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    listen_addr.sin_port = htons(SERV_PORT);
+    bind(listen_fd, (struct sockaddr *)&listen_addr, len);
+    listen(listen_fd, 3);
+    while(1) {
+        read_fd = accept(listen_fd, (struct sockaddr*)&client_addr, &len);
+
+        if (read_fd == -1) {
+            perror("accpet error");
+            return -1;
+        }
+        int pid = fork();
+        if (pid == 0) {
+            close(listen_fd);
+            char pContent[7000];
+            read(read_fd, pContent, 7000);
+            std::cout<<pContent<<pid<<std::endl;
+            //std::cout<<pContent<<std::cout<<read_fd<<std::cout<<pid<<std::endl;
+            close(read_fd);
+            exit(0);
+        }
+        close(read_fd);
+    }
+
+    return 0;
+}
